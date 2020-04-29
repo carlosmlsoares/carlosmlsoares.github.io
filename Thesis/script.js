@@ -625,7 +625,9 @@ function generateFile(triggers,conditions,actions) {
   else{
     text+="\n";
     conditions.forEach(element => {
-      text+="    service: "+ getDevice(element["name"])+"."+element["data"]["data"]+"\n";
+      text+="  - condition: state\n"
+      text+="    entity_id: "+ getDevice(element["name"])+"\n"
+      text+="    state: \'"+element["data"]["data"]+"\'\n"
     });
   }
 
