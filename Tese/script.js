@@ -507,7 +507,7 @@ function viewLocalStorage(){
   document.getElementById('listOfAutomations').textContent=""
  $('#localStorageModal').modal('show')
  if(Object.keys(localStorage).length==0){
-   document.getElementById('listOfAutomations').textContent="There's no saved automations."
+   document.getElementById('listOfAutomations').textContent="There's no saved diagrams."
  }else{
    Object.keys(localStorage).forEach(automation => {
      var span = document.createElement("span");
@@ -554,6 +554,8 @@ function save(){
     "..."
   );
   localStorage.setItem(name,text)
+
+  $('#saveModal').modal("show")
   /*var element = document.createElement('a');
   element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
   element.setAttribute('download', "automation.json");
