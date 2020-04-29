@@ -196,7 +196,7 @@ function login(){
         if (err === ERR_HASS_HOST_REQUIRED) {
           const hassUrl = prompt(
             "What host to connect to?",
-            "http://192.168.1.105:8123"
+            "https://192.168.1.105:8123"
           );
           if (!hassUrl) return;
           //var hassUrl=document.getElementById('hassioIP').textContent;

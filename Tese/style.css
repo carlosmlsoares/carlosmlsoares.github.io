@@ -143,7 +143,7 @@ select, input {
 
 .dock {
   overflow: auto;
-  height: 95%;
+  height: 90%;
   width: 200px;
   float:left;
 }
