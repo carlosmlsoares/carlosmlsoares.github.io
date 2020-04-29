@@ -1,6 +1,6 @@
 /*!
-* rete-connection-plugin v0.3.0 
-* (c) 2018  
+* rete-connection-plugin v0.3.0
+* (c) 2018
 * Released under the ISC license.
 */
 (function (global, factory) {
