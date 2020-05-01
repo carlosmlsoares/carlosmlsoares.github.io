@@ -368,7 +368,11 @@ function update(){
         if (typeof entities[key]["attributes"]["friendly_name"] === "undefined") {
         }
         else{
+            if (devices.includes(entities[key]["attributes"]["friendly_name"])){
+
+            }else{
             devices.push(entities[key]["attributes"]["friendly_name"])
+          }
         }
       });
 
