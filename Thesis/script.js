@@ -385,7 +385,7 @@ function update(){
           allocate(component) {
               groups.sort()
               for (var i=0;i<groups.length;i++){
-                if(component.name=="Time"){
+                if(component.name=="Time Clock"){
                   return ['Others'];
                 }else{
                   if (getDevice(component.name).split(".")[0]==groups[i]){
@@ -416,10 +416,13 @@ function update(){
         itemClass: 'dock-item', // default: dock-item
         plugins: [VueRenderPlugin] // render plugins
       });
+
       devices.forEach(element => {
         components.push(new Component(element));
       });
-      components.push(new Component("Time"))
+
+
+      components.push(new Component("Time Clock"))
 
       var engine = new Rete.Engine('demo@0.1.0');
 
@@ -501,7 +504,7 @@ function updateNodes(){
 
 
               if (node.controls.get("data")===undefined){
-                if (node.name=="Time"){
+                if (node.name=="Time Clock"){
                   var newControl = new TimeControl(editor, 'data');
                   node.addControl(newControl)
                   node.update();
@@ -530,7 +533,7 @@ function updateNodes(){
                 node.removeControl(node.controls.get("data"))
                 node.update();
                 setTimeout(function(){
-                  if (node.name=="Time"){
+                  if (node.name=="Time Clock"){
                     var newControl = new TimeControl(editor, 'data');
                     node.addControl(newControl)
                     node.update();
@@ -582,7 +585,7 @@ function updateNodes(){
               }
 
               if (node.controls.get("data")===undefined){
-                if (node.name=="Time"){
+                if (node.name=="Time Clock"){
                   var newControl = new TimeControl(editor, 'data');
                   node.addControl(newControl)
                   node.update();
@@ -610,7 +613,7 @@ function updateNodes(){
                 node.removeControl(node.controls.get("data"))
                 node.update();
                 setTimeout(function(){
-                  if (node.name=="Time"){
+                  if (node.name=="Time Clock"){
                     var newControl = new TimeControl(editor, 'data');
                     node.addControl(newControl)
                     node.update();
@@ -660,7 +663,7 @@ function updateNodes(){
               }
 
               if (node.controls.get("data")===undefined){
-                if (node.name=="Time"){
+                if (node.name=="Time Clock"){
                   var newControl = new WarningControl(editor, 'data');
                   node.addControl(newControl)
                   node.update();
@@ -688,7 +691,7 @@ function updateNodes(){
                 node.removeControl(node.controls.get("data"))
                 node.update();
                 setTimeout(function(){
-                  if (node.name=="Time"){
+                  if (node.name=="Time Clock"){
                     var newControl = new WarningControl(editor, 'data');
                     node.addControl(newControl)
                     node.update();
