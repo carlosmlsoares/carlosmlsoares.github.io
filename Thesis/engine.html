@@ -166,19 +166,19 @@
 
 </div>
 
-<div class="dock"></div>
+
+<div class="dock" style="float:right"></div>
 
 <!-- ZONE TO PREVIEW THE AUTOMATION THAT HAS BEEN CREATED -->
 <div style="float:left;width:28%;height:2%;text-align:center;margin-top:3px;color:#4bad00;font-size:18px">When</div>
 <div style="float:left;width:28%;height:2%;text-align:center;margin-top:3px;color:#DAA520;font-size:18px">If</div>
 <div style="float:left;width:28%;height:2%;text-align:center;margin-top:3px;color:#730d0d;font-size:18px">Then</div>
 
-<div id="previewTriggers" style="white-space: pre-line;float:left;width:28%;text-align:center;margin-top:3px"></div>
-<div id="previewConditions" style="white-space: pre-line;float:left;width:28%;text-align:center;margin-top:3px"></div>
-<div id="previewActions" style="white-space: pre-line;float:left;width:28%;text-align:center;margin-top:3px"></div>
+<div id="previewTriggers" style="display: inline-block;white-space: pre-line;float:left;;overflow-y: auto;width:28%;height: 10%;text-align:center;margin-top:3px"></div>
+<div id="previewConditions" style="display: inline-block;white-space: pre-line;overflow-y: auto;width:28%;height: 10%;text-align:center;margin-top:3px"></div>
+<div id="previewActions" style="display: inline-block;white-space: pre-line;overflow-y: auto;width:28%;height: 10%;text-align:center;margin-top:3px"></div>
 
 <div id="rete" class="rete"></div>
-
 
 <span id ="services" style="width:0px" ></span>
 <span id ="entities" style="width:0px"></span>
@@ -267,21 +267,21 @@
 </div>
 
 
-<script src='./rete.min.js'></script>
+<script src='./Plugins/rete.min.js'></script>
 <!--<script src='https://cdn.jsdelivr.net/npm/rete@1.0.0/build/rete.debug.js'></script>-->
   <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js'></script>
   <!--<script src='https://cdn.jsdelivr.net/npm/rete-vue-render-plugin@0.2.6/build/vue-render-plugin.min.js'></script>-->
 
-  <script src='./connection-plugin.debug.js'></script>
-  <script src='./context-menu-plugin.min.js'></script>
-  <script src='./vue-render-plugin.min.js'></script>
+  <script src='./Plugins/connection-plugin.min.js'></script>
+  <script src='./Plugins/context-menu-plugin.min.js'></script>
+
+  <script src='./Plugins/vue-render-plugin.min.js'></script>
 
   <script src='https://cdn.jsdelivr.net/npm/alight@0.14.1/alight.min.js'></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/rete-connection-mastery-plugin@0.1.0/build/connection-mastery-plugin.min.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/rete-area-plugin@0.2.0/build/area-plugin.min.js'></script>
   <script src='https://cdn.jsdelivr.net/npm/rete-dock-plugin@0.2.0/build/dock-plugin.min.js'></script>
-
 
 </body>
 </html>

@@ -9,6 +9,8 @@ ERR_HASS_HOST_REQUIRED
 } from "./haws.umd.js"
 //from "https://unpkg.com/home-assistant-js-websocket@5.1.0/dist/index.js";
 
+
+
 document.getElementById("compile").onclick = function(){compile()};
 //document.getElementById("connectButton").onclick = function(){login()};
 document.getElementById("savedFiles").onclick = function(){viewLocalStorage()};
@@ -21,13 +23,20 @@ export var editor = new Rete.NodeEditor('demo@0.1.0', container);
 var ents;
 var servs;
 
-var states={"light":["on","off"],"switch":["on","off"],"media_player":["playing","off","on","idle"]}
+var states={"light":["on","off"],
+"switch":["on","off"],
+"media_player":["playing","off","on","idle"],
+"binary_sensor":["on","off"],
+"automation":["on","off"],
+"sun":["above_horizon","below_horizon"],
+"alarm_control_panel":["disarmed","armed_home","armed_away","armed_night","armed_custom_bypass","pending","triggered","arming","disarming"]
+}
 var entit=document.getElementById("entities")
 var servi=document.getElementById("services")
 
 var VueDropDownControl = {
   props: ['readonly', 'emitter', 'ikey', 'getData', 'putData','idName','lista'],
-  template: '<select id="${idName}" al-value="selectedId" @change= "change($event)" ><option>---</option><option v-for="item in lista">{{item}}</option></select>',
+  template: '<select id="${idName}" al-value="selectedId" @change= "change($event)" ><option></option><option v-for="item in lista">{{item}}</option></select>',
   data() {
     return {
       value: "",
@@ -64,31 +73,119 @@ class DropDownControl extends Rete.Control {
   }
 }
 
-var CustomNode = {
-  template: `<div class="node" :class="[node.name ] | kebab">
-  <div class="title" style="text-align:center" >{{node.name}}</div>
-  <!-- Controls--><center>
-  <div class="control" v-for="control in controls()" v-control="control"></div>
-  </center>
-  <!-- Outputs-->
-  <div style="float:right" class="output" v-for="output in outputs()" :key="output.key">
-    <div class="output-title">{{output.name}}</div>
-    <Socket v-socket:output="output" type="output" :socket="output.socket"></Socket>
-  </div>
-  <!-- Inputs-->
-  <div class="input" v-for="input in inputs()" :key="input.key">
-    <Socket v-socket:input="input" type="input" :socket="input.socket"></Socket>
-    <div class="input-title" v-show="!input.showControl()">{{input.name}}</div>
-    <div class="input-control" v-show="input.showControl()" v-control="input.control"></div>
-  </div>
-</div>`,
-  mixins: [VueRenderPlugin.mixin],
-  components: {
-    Socket: VueRenderPlugin.Socket
+var VueNumControl = {
+  props: ['readonly', 'emitter', 'ikey', 'getData', 'putData'],
+  template: '<input style="width:75%;text-align:center" placeholder="eg: >20" type="text" :readonly="readonly" :value="value" @input="change($event)" @dblclick.stop=""/>',
+  data() {
+    return {
+      value: "",
+    }
+  },
+  methods: {
+    change(e){
+      this.value = e.target.value;
+      this.update();
+    },
+    update() {
+      if (this.ikey)
+        this.putData(this.ikey, this.value)
+      this.emitter.trigger('process');
+    }
+  },
+  mounted() {
+    this.value = this.getData(this.ikey);
   }
 }
-var IfNode = {
-  template: `<div class="node if" :class="[node.name ] | kebab">
+
+class NumControl extends Rete.Control {
+
+  constructor(emitter, key, readonly) {
+    super(key);
+    this.component = VueNumControl;
+    this.props = { emitter, ikey: key, readonly };
+  }
+
+  setValue(val) {
+    this.vueContext.value = val;
+  }
+}
+
+var VueTimeControl = {
+  props: ['readonly', 'emitter', 'ikey', 'getData', 'putData'],
+  template: '<input style="width:75%;text-align:center" placeholder="eg: 17:25" type="text" :readonly="readonly" :value="value" @input="change($event)" @dblclick.stop=""/>',
+  data() {
+    return {
+      value: "",
+    }
+  },
+  methods: {
+    change(e){
+      this.value = e.target.value;
+      this.update();
+    },
+    update() {
+      if (this.ikey)
+        this.putData(this.ikey, this.value)
+      this.emitter.trigger('process');
+    }
+  },
+  mounted() {
+    this.value = this.getData(this.ikey);
+  }
+}
+
+class TimeControl extends Rete.Control {
+
+  constructor(emitter, key, readonly) {
+    super(key);
+    this.component = VueTimeControl;
+    this.props = { emitter, ikey: key, readonly };
+  }
+
+  setValue(val) {
+    this.vueContext.value = val;
+  }
+}
+
+var VueWarningControl = {
+  props: ['readonly', 'emitter', 'ikey', 'getData', 'putData'],
+  template: '<span style="font-size:12px;color:white">This component can\'t be this type! <i class="fa fa-exclamation-triangle"></i></span>',
+  data() {
+    return {
+      value: "",
+    }
+  },
+  methods: {
+    change(e){
+      this.value = e.target.value;
+      this.update();
+    },
+    update() {
+      if (this.ikey)
+        this.putData(this.ikey, this.value)
+      this.emitter.trigger('process');
+    }
+  },
+  mounted() {
+    this.value = this.getData(this.ikey);
+  }
+}
+
+class WarningControl extends Rete.Control {
+
+  constructor(emitter, key, readonly) {
+    super(key);
+    this.component = VueWarningControl;
+    this.props = { emitter, ikey: key, readonly };
+  }
+
+  setValue(val) {
+    this.vueContext.value = val;
+  }
+}
+
+var CustomNode = {
+  template: `<div class="node" :class="[node.name ] | kebab">
   <div class="title" style="text-align:center" >{{node.name}}</div>
   <!-- Controls--><center>
   <div class="control" v-for="control in controls()" v-control="control"></div>
@@ -133,6 +230,7 @@ class Component extends Rete.Component {
 
 }
 
+//ORCHESTRATOR TO PREVIEW HOW AUTOMATION IS GOING
 var orchestrator=window.setInterval(function(){
 
   var addToActions=""
@@ -164,7 +262,7 @@ var orchestrator=window.setInterval(function(){
       }else {
         data=node["data"]["data"]
       }
-      addToTriggers+= "\""+nodeName+"\" change to \""+data+"\"\n"
+      addToTriggers+= "\""+nodeName+"\" state is \""+data+"\"\n"
       }
     if (noInputs>0 && noOutputs>0){
       //condition
@@ -180,12 +278,11 @@ var orchestrator=window.setInterval(function(){
   document.getElementById("previewActions").textContent=addToActions;
   document.getElementById("previewTriggers").textContent=addToTriggers;
   document.getElementById("previewConditions").textContent=addToConditions;
-},500)
+},200)
 
 login();
 
 //LOGIN TO HASSIO
-
 function login(){
 
     (async () => {
@@ -218,7 +315,7 @@ function login(){
 
       window.auth = auth;
       window.connection = connection;
-      getUser(connection).then(user => console.log("Logged in as", user));
+      getUser(connection).then(user => {});
 
       if (location.search.includes("auth_callback=1")) {
           history.replaceState(null, "", location.pathname);
@@ -227,6 +324,7 @@ function login(){
 
       function renderServices(connection, services) {
       //  console.log(services)
+
         servi.textContent=JSON.stringify(services);
         servi.style.visibility="hidden"
       }
@@ -243,10 +341,7 @@ function login(){
 }
 
 //INIT EDITOR
-
 function update(){
-
-
 
   document.getElementById("openModal").style.visibility = "visible";
   document.getElementById("saveButton").style.visibility = "visible";
@@ -260,7 +355,14 @@ function update(){
       entities=JSON.parse(entit.textContent);
       ents=entities
       servs=JSON.parse(servi.textContent);
+
       var keys = Object.keys(entities)
+      var groups=[]
+      keys.forEach(key => {
+        groups.push(key.split(".")[0])
+      });
+      groups.sort();
+
 
       keys.forEach(key => {
         if (typeof entities[key]["attributes"]["friendly_name"] === "undefined") {
@@ -270,11 +372,38 @@ function update(){
         }
       });
 
-      editor.use(ConnectionPlugin);
+      devices.sort()
+      editor.use(ConnectionPlugin.default);
       editor.use(VueRenderPlugin);
-      editor.use(ContextMenuPlugin,{
-          searchBar: true,
+      editor.use(ContextMenuPlugin, {
+          searchBar: true, // true by default
           delay: 100,
+          allocate(component) {
+              groups.sort()
+              for (var i=0;i<groups.length;i++){
+                if(component.name=="Time"){
+                  return ['Others'];
+                }else{
+                  if (getDevice(component.name).split(".")[0]==groups[i]){
+                    return[capitalize(groups[i])]
+                  }
+                }
+
+              }
+              return ['Others'];
+              function capitalize(string)
+              {
+                  return string.charAt(0).toUpperCase() + string.slice(1);
+              }
+
+
+
+          },
+          rename(component) {
+              return component.name;
+          }
+
+
       });
       editor.use(AreaPlugin);
 
@@ -286,6 +415,7 @@ function update(){
       devices.forEach(element => {
         components.push(new Component(element));
       });
+      components.push(new Component("Time"))
 
       var engine = new Rete.Engine('demo@0.1.0');
 
@@ -298,7 +428,7 @@ function update(){
       return source !== 'dblclick';
       });
 
-      editor.on('connectioncreated', async()=>{
+      editor.on('connectioncreated connectionremoved', async()=>{
         updateNodes()
       })
 
@@ -319,7 +449,6 @@ function update(){
 }
 
 //UPDATE NODES WHEN A CONNECTION IS CREATED
-
 function updateNodes(){
     var nodes=editor.nodes;
     (function theLoop (nodes,i) {
@@ -330,42 +459,15 @@ function updateNodes(){
           var noInputs=node.toJSON()["inputs"]["inp"]['connections'].length
           var noOutputs=node.toJSON()["outputs"]["out"]['connections'].length
           //console.log(nodeName + " has "+noInputs+" inputs and "+ noOutputs + " outputs")
-
-          if (noInputs>0 && noOutputs==0){
-            //actioner
+          if (noInputs==0 && noOutputs==0){
+            if(node.vueContext["$el"].classList.contains("action")){node.vueContext["$el"].classList.remove("action")}
             if(node.vueContext["$el"].classList.contains("if")){node.vueContext["$el"].classList.remove("if")}
             if(node.vueContext["$el"].classList.contains("trigger")){node.vueContext["$el"].classList.remove("trigger")}
-            node.vueContext["$el"].classList.add("action")
-            var lista=[]
-            for (var k in ents){
-               var friendly_name = ents[k]["attributes"]["friendly_name"]
-                if(friendly_name == nodeName){
-                  var ser=k.split(".")[0];
-                  for (var serv in servs){
-                    if (ser == serv){
-                      var s = Object.keys(servs[ser]);
-                      for (var l=0;l<s.length;l++){
-                        lista.push(s[l])
-                      }
-                    }
-                  }
-                };
-              }
-
-              if (node.controls.get("data")===undefined){
-                var newControl = new DropDownControl(editor, 'data',false, "drop",lista);
-                node.addControl(newControl)
-                node.update();
-                editor.trigger('process');
-              }else{
-                node.removeControl(node.controls.get("data"))
-                node.update();
-                setTimeout(function(){
-                var newControl = new DropDownControl(editor, 'data',false, "drop",lista);
-                node.addControl(newControl)
-                node.update();
-                editor.trigger('process');},100)
-              }
+            if (node.controls.get("data")===undefined){
+            }else{
+              node.removeControl(node.controls.get("data"))
+              node.update();
+            }
 
           }
 
@@ -393,21 +495,65 @@ function updateNodes(){
                 }
               }
 
+
               if (node.controls.get("data")===undefined){
-                var newControl = new DropDownControl(editor, 'data',false, "drop",lista);
-                node.addControl(newControl)
-                node.update();
-                editor.trigger('process');
+                if (node.name=="Time"){
+                  var newControl = new TimeControl(editor, 'data');
+                  node.addControl(newControl)
+                  node.update();
+                  editor.trigger('process');
+                }else{
+                  if(getDevice(node.name).split(".")[0]=="sensor"){
+                    var newControl = new NumControl(editor, 'data');
+                    node.addControl(newControl)
+                    node.update();
+                    editor.trigger('process');
+                  }
+                  else{
+                    var newControl;
+                    if(lista.length==0){
+                      newControl= new WarningControl(editor, 'data');
+                    }else{
+                      newControl = new DropDownControl(editor, 'data',false, "drop",lista);
+                    }
+                    node.addControl(newControl)
+                    node.update();
+                    editor.trigger('process');
+
+                  }
+                }
               }else{
                 node.removeControl(node.controls.get("data"))
                 node.update();
                 setTimeout(function(){
-                var newControl = new DropDownControl(editor, 'data',false, "drop",lista);
-                node.addControl(newControl)
-                node.update();
-                editor.trigger('process');},100)
-              }
+                  if (node.name=="Time"){
+                    var newControl = new TimeControl(editor, 'data');
+                    node.addControl(newControl)
+                    node.update();
+                    editor.trigger('process');
+                  }else{
+                    if(getDevice(node.name).split(".")[0]=="sensor"){
+                      var newControl = new NumControl(editor, 'data');
+                      node.addControl(newControl)
+                      node.update();
+                      editor.trigger('process');
+                    }
+                    else{
+                      var newControl;
+                      if(lista.length==0){
+                        newControl= new WarningControl(editor, 'data');
+                      }else{
+                        newControl = new DropDownControl(editor, 'data',false, "drop",lista);
+                      }
+                      node.addControl(newControl)
+                      node.update();
+                      editor.trigger('process');
+                    }
+                  }
+              },50);
             }
+          }
+
           if (noInputs>0 && noOutputs>0){
             //condition
             if(node.vueContext["$el"].classList.contains("action")){node.vueContext["$el"].classList.remove("action")}
@@ -432,31 +578,151 @@ function updateNodes(){
               }
 
               if (node.controls.get("data")===undefined){
-                var newControl = new DropDownControl(editor, 'data',false, "drop",lista);
-                node.addControl(newControl)
-                node.update();
-                editor.trigger('process');
+                if (node.name=="Time"){
+                  var newControl = new TimeControl(editor, 'data');
+                  node.addControl(newControl)
+                  node.update();
+                  editor.trigger('process');
+                }else{
+                  if(getDevice(node.name).split(".")[0]=="sensor"){
+                    var newControl = new NumControl(editor, 'data');
+                    node.addControl(newControl)
+                    node.update();
+                    editor.trigger('process');
+                  }
+                  else{
+                    var newControl;
+                    if(lista.length==0){
+                      newControl= new WarningControl(editor, 'data');
+                    }else{
+                      newControl = new DropDownControl(editor, 'data',false, "drop",lista);
+                    }
+                    node.addControl(newControl)
+                    node.update();
+                    editor.trigger('process');
+                  }
+                }
               }else{
                 node.removeControl(node.controls.get("data"))
                 node.update();
                 setTimeout(function(){
-                var newControl = new DropDownControl(editor, 'data',false, "drop",lista);
-                node.addControl(newControl)
-                node.update();
-                editor.trigger('process');},100)
+                  if (node.name=="Time"){
+                    var newControl = new TimeControl(editor, 'data');
+                    node.addControl(newControl)
+                    node.update();
+                    editor.trigger('process');
+                  }else{
+                    if(getDevice(node.name).split(".")[0]=="sensor"){
+                      var newControl = new NumControl(editor, 'data');
+                      node.addControl(newControl)
+                      node.update();
+                      editor.trigger('process');
+                    }
+                    else{
+                      var newControl;
+                      if(lista.length==0){
+                        newControl= new WarningControl(editor, 'data');
+                      }else{
+                        newControl = new DropDownControl(editor, 'data',false, "drop",lista);
+                      }
+                      node.addControl(newControl)
+                      node.update();
+                      editor.trigger('process');
+                    }
+                  }
+              },50);
+            }
+            }
+
+          if (noInputs>0 && noOutputs==0){
+            //actioner
+            if(node.vueContext["$el"].classList.contains("if")){node.vueContext["$el"].classList.remove("if")}
+            if(node.vueContext["$el"].classList.contains("trigger")){node.vueContext["$el"].classList.remove("trigger")}
+            node.vueContext["$el"].classList.add("action")
+            var lista=[]
+            for (var k in ents){
+               var friendly_name = ents[k]["attributes"]["friendly_name"]
+                if(friendly_name == nodeName){
+                  var ser=k.split(".")[0];
+                  for (var serv in servs){
+                    if (ser == serv){
+                      var s = Object.keys(servs[ser]);
+                      for (var l=0;l<s.length;l++){
+                        lista.push(s[l])
+                      }
+                    }
+                  }
+                };
               }
+
+              if (node.controls.get("data")===undefined){
+                if (node.name=="Time"){
+                  var newControl = new WarningControl(editor, 'data');
+                  node.addControl(newControl)
+                  node.update();
+                  editor.trigger('process');
+                }else{
+                  if(getDevice(node.name).split(".")[0]=="sensor"){
+                    var newControl = new WarningControl(editor, 'data');
+                    node.addControl(newControl)
+                    node.update();
+                    editor.trigger('process');
+                  }
+                  else{
+                    var newControl;
+                    if(lista.length==0){
+                      newControl= new WarningControl(editor, 'data');
+                    }else{
+                      newControl = new DropDownControl(editor, 'data',false, "drop",lista);
+                    }
+                    node.addControl(newControl)
+                    node.update();
+                    editor.trigger('process');
+                  }
+                }
+              }else{
+                node.removeControl(node.controls.get("data"))
+                node.update();
+                setTimeout(function(){
+                  if (node.name=="Time"){
+                    var newControl = new WarningControl(editor, 'data');
+                    node.addControl(newControl)
+                    node.update();
+                    editor.trigger('process');
+                  }else{
+                    if(getDevice(node.name).split(".")[0]=="sensor"){
+                      var newControl = new WarningControl(editor, 'data');
+                      node.addControl(newControl)
+                      node.update();
+                      editor.trigger('process');
+                    }
+                    else{
+                      var newControl;
+                      if(lista.length==0){
+                        newControl= new WarningControl(editor, 'data');
+                      }else{
+                        newControl = new DropDownControl(editor, 'data',false, "drop",lista);
+                      }
+                      node.addControl(newControl)
+                      node.update();
+                      editor.trigger('process');
+                    }
+                  }
+              },50);
+            }
           }
+
+
           // DO SOMETHING WITH data AND stuff
           if (i--) {
             theLoop(nodes,i);  // Call the loop again
           }
-        }, 200);
+        }, 100);
       })(nodes,nodes.length-1);
 
   }
 
 // GENERATE FILE TO DOWNLOAD
-
 function compile(){
 
   var json = editor.toJSON();
@@ -662,7 +928,7 @@ function getDevice(name){
   for (var entity in ents){
     var friendly_name = ents[entity]["attributes"]["friendly_name"]
     if (friendly_name==name){
-      console.log(ents[entity]["entity_id"])
+      //console.log(ents[entity]["entity_id"])
       return ents[entity]["entity_id"]
     }
   }
