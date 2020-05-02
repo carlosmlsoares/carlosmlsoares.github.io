@@ -10,12 +10,12 @@ ERR_HASS_HOST_REQUIRED
 //from "https://unpkg.com/home-assistant-js-websocket@5.1.0/dist/index.js";
 
 
-
 document.getElementById("compile").onclick = function(){compile()};
-//document.getElementById("connectButton").onclick = function(){login()};
+
 document.getElementById("savedFiles").onclick = function(){viewLocalStorage()};
 document.getElementById("saveButton").onclick = function(){save()};
 document.getElementById("uploadButton").onclick = function(){upload()};
+Sentry.init({ dsn: 'https://aea9c083a03f48e3b0821c4c3bf0a067@o386755.ingest.sentry.io/5221457' });
 
 var socket = new Rete.Socket('String');
 var container = document.querySelector('#rete');
@@ -36,7 +36,7 @@ var servi=document.getElementById("services")
 
 var VueDropDownControl = {
   props: ['readonly', 'emitter', 'ikey', 'getData', 'putData','idName','lista'],
-  template: '<select id="${idName}" al-value="selectedId" @change= "change($event)" ><option></option><option v-for="item in lista">{{item}}</option></select>',
+  template: '<select id="${idName}" al-value="selectedId" @change= "change($event)" ><option v-for="item in lista">{{item}}</option></select>',
   data() {
     return {
       value: "",
@@ -291,13 +291,25 @@ function login(){
         auth = await getAuth();
       } catch (err) {
         if (err === ERR_HASS_HOST_REQUIRED) {
-          const hassUrl = prompt(
-            "What host to connect to?",
-            "https://192.168.1.105:8123"
-          );
+          var hassUrl;
+          var freqIP=getCookie("freqIP")
+          console.log(freqIP)
+          if (freqIP!=""){
+
+            hassUrl = prompt(
+              "What host to connect to?",
+              freqIP
+            );
+          }else{
+            hassUrl = prompt(
+              "What host to connect to?",
+              "https://YOURHAIPADDRESS:8123"
+            );
+            setCookie("freqIP",hassUrl,30)
+          }
+
           if (!hassUrl) return;
           //var hassUrl=document.getElementById('hassioIP').textContent;
-
           auth = await getAuth({hassUrl});
         } else {
           alert(`Unknown error: ${err}`);
@@ -321,10 +333,7 @@ function login(){
           history.replaceState(null, "", location.pathname);
       }
 
-
       function renderServices(connection, services) {
-      //  console.log(services)
-
         servi.textContent=JSON.stringify(services);
         servi.style.visibility="hidden"
       }
@@ -343,10 +352,10 @@ function login(){
 //INIT EDITOR
 function update(){
 
-  document.getElementById("openModal").style.visibility = "visible";
-  document.getElementById("saveButton").style.visibility = "visible";
-  document.getElementById("savedFiles").style.visibility = "visible";
-  document.getElementById("uploadButton").style.visibility = "visible";
+  document.getElementById("openModal").style.display = "block";
+  document.getElementById("saveButton").style.display = "block";
+  document.getElementById("savedFiles").style.display = "block";
+  document.getElementById("uploadButton").style.display = "block";
 
   (async () => {
 
@@ -409,6 +418,7 @@ function update(){
 
 
       });
+      asdsa();
       editor.use(AreaPlugin);
 
       editor.use(DockPlugin.default, {
@@ -776,6 +786,7 @@ function compile(){
 
 };
 
+// SHOW SAVED AUTOMATIONS
 function viewLocalStorage(){
   document.getElementById('listOfAutomations').textContent=""
  $('#localStorageModal').modal('show')
@@ -804,6 +815,7 @@ function viewLocalStorage(){
  }
 }
 
+// SAVE SPECIFIC AUTOMATION
 function saveItem(automation){
   var element = document.createElement('a');
   var text=localStorage.getItem(automation)
@@ -818,6 +830,7 @@ function saveItem(automation){
   document.getElementById("aux").removeChild(element);
 }
 
+// UPLOAD DIAGRAM TO LOCAL STORAGE
 function save(){
   var json= editor.toJSON();
   var text=JSON.stringify(json)
@@ -841,6 +854,7 @@ function save(){
   document.body.removeChild(element);*/
 }
 
+// UPLOAD FROM FILE
 function upload(){
     var input=document.createElement('input');
     input.type="file";
@@ -852,6 +866,7 @@ function upload(){
     },100);
 }
 
+// AUX FUNCTION
 function readFileAsString() {
     var files = this.files;
     if (files.length === 0) {
@@ -873,6 +888,7 @@ function readFileAsString() {
     reader.readAsText(files[0]);
 }
 
+// CREATE YAML FILE
 function generateFile(triggers,conditions,actions) {
 
   var text="- id: \'"+Math.floor(Math.random()*90000000000000  + 10000000000000)+"\'\n"
@@ -930,6 +946,7 @@ function generateFile(triggers,conditions,actions) {
   document.body.removeChild(element);*/
 }
 
+// GET ENTITY ID FROM NAME
 function getDevice(name){
 
   for (var entity in ents){
@@ -939,4 +956,27 @@ function getDevice(name){
       return ents[entity]["entity_id"]
     }
   }
+}
+
+// SET COOKIE
+function setCookie(cname,cvalue,exminutes) {
+  var d = new Date();
+  d.setTime(d.getTime() + (exminutes*60*24*60*1000));
+  var expires = "expires=" + d.toGMTString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var ca = document.cookie.split(';');
+  for(var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
 }

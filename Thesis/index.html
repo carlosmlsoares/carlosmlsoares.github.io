@@ -2,18 +2,19 @@
 <html lang="en" style="" >
 <head>
   <meta charset="UTF-8">
-  <title>Rule Engine</title>
+  <title>Whenite</title>
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="https://bootswatch.com/4/yeti/bootstrap.min.css">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
-
+  <script src="https://browser.sentry-cdn.com/5.15.5/bundle.min.js" integrity="sha384-wF7Jc4ZlWVxe/L8Ji3hOIBeTgo/HwFuaeEfjGmS3EXAG7Y+7Kjjr91gJpJtr+PAT" crossorigin="anonymous">
+  </script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-primary">
-        <a class="navbar-brand" href="index.html">Rule Engine for Home Assistant</a>
+        <a class="navbar-brand" href="index.html">Whenite</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -24,7 +25,7 @@
                 <a class="nav-link" href="index.html">Introduction<span class="sr-only"></span></a>
               </li>
             <li class="nav-item">
-                <a class="nav-link" href="engine.html">Engine <span class="sr-only"></span></a>
+                <a class="nav-link" href="engine.html">Editor <span class="sr-only"></span></a>
               </li>
               <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -42,7 +43,7 @@
       </nav>
       <div class="blog-header" style="margin-top:5%">
             <div class="container">
-              <h1 class="blog-title">Introduction to the Rule Engine</h1>
+              <h1 class="blog-title">Introduction to Whenite</h1>
             </div>
           </div>
 
@@ -53,7 +54,7 @@
                   <a name="section1"></a>
                   <h2 class="blog-post-title">1. Connecting to Home Assistant</h2>
 
-                  <p>When you enter the <a href="./engine.html">engine page</a> you can see the Home Assistant's logo and a message saying that the engine is trying to connect to your Home Assistant instance.</p>
+                  <p>When you enter the <a href="./engine.html">editor page</a> you can see the Home Assistant's logo and a message saying that the engine is trying to connect to your Home Assistant instance.</p>
                   <p>A few moments later, a pop-up appears asking for your Home Assistant IP address. You write the IP of your instance and the editor redirects you to an authentication page.</p>
 
                   <p>Once your login is correct and the authentication goes well, the editor is loaded!</p>
@@ -67,7 +68,7 @@
                   <a name="section2"></a>
                   <h2 class="blog-post-title">2. The Editor</h2>
 
-                  <p>The editor is really simple! On the top we can see an orchestrator, which is responsible to show how the automation is going on.</p>
+                  <p>The editor is really simple! On the top we can see a preview of how the automation is going.</p>
                   <p>On the left side, are displayed the devices that you have connected to your Home Assistant.</p>
                   <p>On the top bar, you have buttons that you can use when your automation is finished or simply if you want to update one from your computer.</p>
                   <img src="./Assets/Demos/editor.png" alt="Editor" style="width:100%" />
@@ -131,7 +132,7 @@
                   <a name="section6"></a>
                   <h2 class="blog-post-title">6. Save to Local Storage</h2>
 
-                  <p>If you don't want to generate de file in that moment, you can save the automation on the Local Storage of your browser. When you click the "Save" button you need to tell the name of the automation to be saved and then a message appears telling you that you automation is saved successfully.</p>
+                  <p>If you don't want to generate the file in that moment, you can save the automation on the Local Storage of your browser. When you click the "Save" button you need to tell the name of the automation to be saved and then a message appears telling you that you automation is saved successfully.</p>
 
                   <p>By clicking the button "Saved Diagrams" on the top bar, you can see the automations saved on your local storage and download it.</p>
 
