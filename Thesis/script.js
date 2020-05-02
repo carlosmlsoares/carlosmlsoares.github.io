@@ -351,7 +351,7 @@ function login(){
 
 //INIT EDITOR
 function update(){
-
+  NoFunction();
   document.getElementById("openModal").style.display = "block";
   document.getElementById("saveButton").style.display = "block";
   document.getElementById("savedFiles").style.display = "block";
@@ -418,7 +418,7 @@ function update(){
 
 
       });
-      asdsa();
+
       editor.use(AreaPlugin);
 
       editor.use(DockPlugin.default, {
